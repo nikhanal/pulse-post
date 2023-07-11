@@ -1,7 +1,7 @@
 const pg = require("pg");
 const express = require("express");
 const cors = require("cors");
-
+const bcrypt = require("bcrypt");
 const app = express();
 const port = 5500;
 
@@ -37,19 +37,26 @@ app.post("/signup", function (req, res) {
         if (result.rows.length > 0) {
           res.status(409).send("User already exists");
         } else {
-          client.query(
-            "INSERT INTO tbl_user (name, email, username, password) VALUES ($1, $2, $3, $4)",
-            [name, email, username, password],
-            function (err, result) {
-              if (err) {
-                console.error("Error occurred during signup:", err);
-                res.status(500).send("Error occurred during signup");
-              } else {
-                console.log("User registered successfully");
-                res.status(200).send("User registered successfully");
-              }
+          bcrypt.hash(password, 10, (err, hashedPassword) => {
+            if (err) {
+              console.log("Error while hashing password: ", err);
+              res.status(500).send("Error occurred during signup");
+            } else {
+              client.query(
+                "INSERT INTO tbl_user (name, email, username, password) VALUES ($1, $2, $3, $4)",
+                [name, email, username, hashedPassword],
+                function (err, result) {
+                  if (err) {
+                    console.error("Error occurred during signup:", err);
+                    res.status(500).send("Error occurred during signup");
+                  } else {
+                    console.log("User registered successfully");
+                    res.status(200).send("User registered successfully");
+                  }
+                }
+              );
             }
-          );
+          });
         }
       }
     }
