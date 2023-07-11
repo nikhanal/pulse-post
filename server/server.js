@@ -27,15 +27,30 @@ app.get("/login", function (req, res) {
 app.post("/signup", function (req, res) {
   const { name, email, username, password } = req.body;
   client.query(
-    "INSERT INTO tbl_user (name, email, username, password) VALUES ($1, $2, $3, $4)",
-    [name, email, username, password],
+    "SELECT * FROM tbl_user WHERE username = $1 OR email = $2",
+    [username, email],
     function (err, result) {
       if (err) {
         console.error("Error occurred during signup:", err);
         res.status(500).send("Error occurred during signup");
       } else {
-        console.log("User registered successfully");
-        res.status(200).send("User registered successfully");
+        if (result.rows.length > 0) {
+          res.status(409).send("User already exists");
+        } else {
+          client.query(
+            "INSERT INTO tbl_user (name, email, username, password) VALUES ($1, $2, $3, $4)",
+            [name, email, username, password],
+            function (err, result) {
+              if (err) {
+                console.error("Error occurred during signup:", err);
+                res.status(500).send("Error occurred during signup");
+              } else {
+                console.log("User registered successfully");
+                res.status(200).send("User registered successfully");
+              }
+            }
+          );
+        }
       }
     }
   );
