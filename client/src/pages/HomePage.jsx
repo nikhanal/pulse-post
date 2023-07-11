@@ -1,9 +1,19 @@
+import { useEffect } from "react";
 import AddPostComponent from "../components/AddPostComponent";
 
 import PostComponent from "../components/PostComponent";
 import { SideBarComponent } from "../components/SideBarComponent";
 import { AiOutlineUser } from "react-icons/ai";
+import { useNavigate } from "react-router-dom";
 const HomePage = () => {
+  const navigate = useNavigate();
+  console.log(localStorage);
+  useEffect(() => {
+    const isLoggedIn = !!localStorage.getItem("token");
+    if (!isLoggedIn) {
+      navigate("/login");
+    }
+  });
   return (
     <div className="bg-black">
       <SideBarComponent image={<AiOutlineUser />} />

@@ -17,7 +17,7 @@ const PostComponent = () => {
   });
 
   return (
-    <div className="w-full bg-[#16181c] text-white rounded-md flex p-4 gap-4">
+    <div className="w-full bg-[#16181c] text-white rounded-md flex p-4 gap-4 min-h-[150px]">
       <div className="h-16 w-24">
         <img
           src={userpic}

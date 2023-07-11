@@ -4,7 +4,10 @@ const cors = require("cors");
 const bcrypt = require("bcrypt");
 const app = express();
 const port = 5500;
+const jwt = require("jsonwebtoken");
+require("dotenv").config();
 
+const jwtSecret = process.env.JWT_SECRET;
 const conString =
   "postgres://yuojwpar:ILr6DxAHLFTSdYTUxNqNtxCo0sTvhwSW@tyke.db.elephantsql.com/yuojwpar";
 const client = new pg.Client(conString);
@@ -20,8 +23,54 @@ client.connect(function (err) {
 app.use(cors());
 app.use(express.json());
 
-app.get("/login", function (req, res) {
-  res.send({ token: "123ik" });
+app.post("/login", function (req, res) {
+  const { email, password } = req.body;
+  client.query(
+    "SELECT * FROM tbl_user WHERE email = $1",
+    [email],
+    function (err, result) {
+      if (err) {
+        console.error("Error occurred during login:", err);
+        res.status(500).send("Error occurred during login");
+      } else {
+        if (result.rows.length === 0) {
+          res.status(409).send("User with this email does not exist");
+        } else {
+          const user = result.rows[0];
+          bcrypt.compare(
+            password,
+            user.password,
+            function (err, passwordMatch) {
+              if (err) {
+                console.error(
+                  "Error occurred during password comparison:",
+                  err
+                );
+                res.status(500).send("Error occurred during login");
+              } else if (passwordMatch) {
+                const payload = {
+                  email: user.email,
+                  name: user.name,
+                  username: user.username,
+                };
+                const token = jwt.sign(payload, jwtSecret, {
+                  expiresIn: "24h",
+                });
+                res.status(200).json({
+                  token,
+                  name: user.name,
+                  username: user.username,
+                  userid: user.userid,
+                });
+              } else {
+                res.status(401).send("Incorrect password");
+              }
+            }
+          );
+        }
+      }
+    }
+  );
 });
 
 app.post("/signup", function (req, res) {
@@ -50,8 +99,20 @@ app.post("/signup", function (req, res) {
                     console.error("Error occurred during signup:", err);
                     res.status(500).send("Error occurred during signup");
                   } else {
-                    console.log("User registered successfully");
-                    res.status(200).send("User registered successfully");
+                    const payload = {
+                      email: user.email,
+                      name: user.name,
+                      username: user.username,
+                    };
+                    const token = jwt.sign(payload, jwtSecret, {
+                      expiresIn: "24h",
+                    });
+                    res.status(200).json({
+                      token,
+                      name: user.name,
+                      username: user.username,
+                      userid: user.userid,
+                    });
                   }
                 }
               );

@@ -1,8 +1,26 @@
 import userpic from "../assets/profile_pic.jpeg";
 import { MdPermMedia } from "react-icons/md";
 import { AiOutlineGif } from "react-icons/ai";
+import { useEffect, useState } from "react";
 
 const AddPostComponent = () => {
+  const [userId, setuserId] = useState();
+  useEffect(() => {
+    const isLoggedIn = !!localStorage.getItem("token");
+    if (isLoggedIn) {
+      setuserId(localStorage.getItem("userid"));
+    }
+  }, [userId]);
+
+  const handlePost = async (e) => {
+    e.preventDefault();
+
+    try {
+      const res = await fetch;
+    } catch (error) {
+      console.log("Error while posting: ", error);
+    }
+  };
   return (
     <div className="text-white border-b-2  border-[#565a5e] flex p-4 gap-4">
       <div className="bg-red h-14 w-20">
@@ -20,7 +38,12 @@ const AddPostComponent = () => {
             <MdPermMedia />
             <AiOutlineGif />
           </div>
-          <button className=" bg-[#565a5e] px-6 py-2 rounded-xl hover:bg-black border border-[#565a5e]">
+          <button
+            className=" bg-[#565a5e] px-6 py-2 rounded-xl hover:bg-black border border-[#565a5e]"
+            onClick={(e) => {
+              handlePost(e);
+            }}
+          >
             Post
           </button>
         </div>

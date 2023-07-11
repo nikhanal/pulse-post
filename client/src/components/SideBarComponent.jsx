@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { AiOutlineHome } from "react-icons/ai";
 import { BiSearch } from "react-icons/bi";
 import { TiMessages } from "react-icons/ti";
@@ -19,6 +19,7 @@ const LinkText = tw.span`
 `;
 
 export const SideBarComponent = ({ image }) => {
+  const navigate = useNavigate();
   return (
     <div
       className="group flex items-center justify-center fixed top-0 left-0 w-16 h-full bg-[#16181c] text-white overflow-hidden transition-all duration-100 
@@ -52,12 +53,18 @@ export const SideBarComponent = ({ image }) => {
           </Link>
         </div>
         <div>
-          <Link to="/login">
-            <IconTextDiv>
-              {image}
-              <LinkText>Login</LinkText>
-            </IconTextDiv>
-          </Link>
+          <IconTextDiv
+            className=" cursor-pointer"
+            onClick={() => {
+              localStorage.removeItem("token");
+              localStorage.removeItem("name");
+              localStorage.removeItem("username");
+              navigate("/");
+            }}
+          >
+            {image}
+            <LinkText className="dropbtn">Logout</LinkText>
+          </IconTextDiv>
         </div>
       </div>
     </div>
