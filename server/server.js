@@ -92,13 +92,19 @@ app.post("/signup", function (req, res) {
               res.status(500).send("Error occurred during signup");
             } else {
               client.query(
-                "INSERT INTO tbl_user (name, email, username, password) VALUES ($1, $2, $3, $4)",
+                "INSERT INTO tbl_user (name, email, username, password) VALUES ($1, $2, $3, $4) RETURNING userid",
                 [name, email, username, hashedPassword],
                 function (err, result) {
                   if (err) {
                     console.error("Error occurred during signup:", err);
                     res.status(500).send("Error occurred during signup");
                   } else {
+                    const user = {
+                      userid: result.rows[0].userid,
+                      email: email,
+                      name: name,
+                      username: username,
+                    };
                     const payload = {
                       email: user.email,
                       name: user.name,
@@ -111,6 +117,7 @@ app.post("/signup", function (req, res) {
                       token,
                       name: user.name,
                       username: user.username,
+                      email: user.email,
                       userid: user.userid,
                     });
                   }
@@ -119,6 +126,22 @@ app.post("/signup", function (req, res) {
             }
           });
         }
+      }
+    }
+  );
+});
+
+app.post("/post", function (req, res) {
+  const { userid, post } = req.body;
+  client.query(
+    "INSERT INTO tbl_posts (userid,post) VALUES ($1,$2)",
+    [userid, post],
+    function (err, result) {
+      if (err) {
+        console.error("Error occurred during adding a post:", err);
+        res.status(500).send("Error occurred during adding a post");
+      } else {
+        res.status(200).send("Post was added successfully");
       }
     }
   );

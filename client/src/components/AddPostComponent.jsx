@@ -1,10 +1,11 @@
 import userpic from "../assets/profile_pic.jpeg";
 import { MdPermMedia } from "react-icons/md";
 import { AiOutlineGif } from "react-icons/ai";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 const AddPostComponent = () => {
   const [userId, setuserId] = useState();
+  const postref = useRef();
   useEffect(() => {
     const isLoggedIn = !!localStorage.getItem("token");
     if (isLoggedIn) {
@@ -12,11 +13,25 @@ const AddPostComponent = () => {
     }
   }, [userId]);
 
-  const handlePost = async (e) => {
-    e.preventDefault();
-
+  const handlePost = async () => {
+    const postContent = await postref.current.value;
     try {
-      const res = await fetch;
+      const res = await fetch("http://localhost:5500/post", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          post: postContent,
+          userid: userId,
+        }),
+      });
+      if (res.ok) {
+        console.log(await res.text());
+        postref.current.value = "";
+      } else {
+        console.log(await res.text());
+      }
     } catch (error) {
       console.log("Error while posting: ", error);
     }
@@ -31,6 +46,7 @@ const AddPostComponent = () => {
           <input
             placeholder="What is in your mind?"
             className="bg-inherit py-10 w-full outline-0 text-lg"
+            ref={postref}
           />
         </form>
         <div className="flex justify-between items-center">
