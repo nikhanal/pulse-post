@@ -8,10 +8,14 @@ const RenderPostsComponent = () => {
 
   useEffect(() => {
     const fetchPosts = async () => {
-      const res = await fetch("http://localhost:5500/getposts");
-      const data = await res.json();
-      setPostData(data);
-      setIsPosted(0);
+      try {
+        const res = await fetch("http://localhost:5500/getposts");
+        const data = await res.json();
+        setPostData(data);
+        setIsPosted(0);
+      } catch (error) {
+        console.log(error);
+      }
     };
 
     fetchPosts();
@@ -25,7 +29,9 @@ const RenderPostsComponent = () => {
             username={post.username}
             name={post.name}
             post={post.post}
+            likes={post.likes}
             key={post.postid}
+            postid={post.postid}
           />
         ))
       ) : (

@@ -133,13 +133,33 @@ app.post("/signup", function (req, res) {
 
 app.get("/getposts", function (req, res) {
   client.query(
-    "SELECT tbl_posts.post, tbl_user.username, tbl_user.name FROM tbl_posts INNER JOIN tbl_user ON tbl_posts.userid = tbl_user.userid ORDER BY tbl_posts.created_at DESC",
+    "SELECT tbl_posts.post, tbl_user.username, tbl_user.name, tbl_posts.likes, tbl_posts.postid FROM tbl_posts INNER JOIN tbl_user ON tbl_posts.userid = tbl_user.userid ORDER BY tbl_posts.created_at DESC",
     (err, result) => {
       if (err) {
         console.error("Error while fetching posts");
         res.status(500).send("Error while fetching posts");
       } else {
         res.status(200).send(result.rows);
+      }
+    }
+  );
+});
+
+app.post("/like", function (req, res) {
+  const { postid } = req.body;
+  client.query(
+    "UPDATE tbl_posts SET likes = likes + 1 WHERE postid = $1",
+    [postid],
+    function (err, result) {
+      if (err) {
+        console.error("Error occurred during liking a post:", err);
+        res.status(500).send("Error occurred during liking a post");
+      } else {
+        if (result.rowCount === 0) {
+          res.status(404).send("No post found with the provided post id.");
+        } else {
+          res.status(200).send("Likes incremented by 1");
+        }
       }
     }
   );

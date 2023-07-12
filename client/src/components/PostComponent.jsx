@@ -1,12 +1,14 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useContext } from "react";
 import userpic from "../assets/profile_pic.jpeg";
 import { AiOutlineLike, AiOutlineDelete } from "react-icons/ai";
 import { PiShareFatLight } from "react-icons/pi";
 import { BiMessageRounded } from "react-icons/bi";
 import { FiEdit2 } from "react-icons/fi";
 import { CiMenuKebab } from "react-icons/ci";
+import { PostContext } from "../context/PostContext";
 import PropTypes from "prop-types";
-const PostComponent = ({ name, username, post }) => {
+const PostComponent = ({ name, username, post, likes, postid }) => {
+  const { setIsPosted } = useContext(PostContext);
   const dropDownRef = useRef();
   const [dropdown, setDropdown] = useState(false);
   window.addEventListener("click", (e) => {
@@ -14,7 +16,28 @@ const PostComponent = ({ name, username, post }) => {
       setDropdown(false);
     }
   });
+  const handleLike = async () => {
+    console.log(postid);
+    try {
+      const res = await fetch("http://localhost:5500/like", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          postid,
+        }),
+      });
 
+      if (res.ok) {
+        setIsPosted(1);
+      } else {
+        console.log(await res.text());
+      }
+    } catch (error) {
+      console.log("Error while liking post: ", error);
+    }
+  };
   return (
     <div className="w-full bg-[#16181c] text-white rounded-md flex p-4 gap-4 min-h-[150px]">
       <div className="h-16 w-24">
@@ -63,9 +86,12 @@ const PostComponent = ({ name, username, post }) => {
             <span>10</span>
           </div>
           <div>
-            <div className="flex items-center justify-center gap-2">
+            <div
+              className="flex items-center justify-center gap-2 cursor-pointer hover:scale-110"
+              onClick={handleLike}
+            >
               <AiOutlineLike />
-              <span>2</span>
+              {likes ? <span>{likes}</span> : <span>0</span>}
             </div>
           </div>
           <div>
@@ -84,6 +110,8 @@ PostComponent.propTypes = {
   name: PropTypes.string,
   username: PropTypes.string,
   post: PropTypes.string,
+  likes: PropTypes.number,
+  postid: PropTypes.number,
 };
 
 export default PostComponent;
