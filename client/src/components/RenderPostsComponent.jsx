@@ -32,6 +32,7 @@ const RenderPostsComponent = () => {
             likes={post.likes}
             key={post.postid}
             postid={post.postid}
+            postuserid={post.postuserid}
           />
         ))
       ) : (

@@ -8,8 +8,7 @@ const jwt = require("jsonwebtoken");
 require("dotenv").config();
 
 const jwtSecret = process.env.JWT_SECRET;
-const conString =
-  "postgres://yuojwpar:ILr6DxAHLFTSdYTUxNqNtxCo0sTvhwSW@tyke.db.elephantsql.com/yuojwpar";
+const conString = process.env.DB_KEY;
 const client = new pg.Client(conString);
 
 client.connect(function (err) {
@@ -133,7 +132,7 @@ app.post("/signup", function (req, res) {
 
 app.get("/getposts", function (req, res) {
   client.query(
-    "SELECT tbl_posts.post, tbl_user.username, tbl_user.name, tbl_posts.likes, tbl_posts.postid FROM tbl_posts INNER JOIN tbl_user ON tbl_posts.userid = tbl_user.userid ORDER BY tbl_posts.created_at DESC",
+    "SELECT tbl_posts.post, tbl_user.username, tbl_user.name, tbl_posts.likes, tbl_posts.postid,tbl_posts.userid as postuserid FROM tbl_posts INNER JOIN tbl_user ON tbl_posts.userid = tbl_user.userid ORDER BY tbl_posts.created_at DESC",
     (err, result) => {
       if (err) {
         console.error("Error while fetching posts");
@@ -180,6 +179,8 @@ app.post("/post", function (req, res) {
     }
   );
 });
+
+app.post("/delete", function (req, res) {});
 
 app.listen(port, () => {
   console.log(`Server started at port ${port}`);

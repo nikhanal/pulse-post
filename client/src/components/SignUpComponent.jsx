@@ -2,6 +2,8 @@ import { Link, useNavigate } from "react-router-dom";
 import tw from "tailwind-styled-components";
 import Logo from "../assets/logos/PulsePost-logos_white.png";
 import SignUpForm from "./SignUpForm";
+import { useState } from "react";
+import { PropTypes } from "prop-types";
 
 const Container = tw.div`
   w-[50%]
@@ -25,6 +27,7 @@ const Border = tw.div`
 `;
 
 const SignUpComponent = () => {
+  const [errorMsg, setErrorMsg] = useState(null);
   const navigate = useNavigate();
   const addUserToDb = async (formData) => {
     try {
@@ -35,7 +38,6 @@ const SignUpComponent = () => {
         },
         body: JSON.stringify(formData),
       });
-
       if (response.ok) {
         const data = await response.json();
         const { token, username, name, userid } = data;
@@ -43,13 +45,15 @@ const SignUpComponent = () => {
         localStorage.setItem("username", username);
         localStorage.setItem("name", name);
         localStorage.setItem("userid", userid);
-        console.log("Sing Up successful");
+        console.log("Sign Up successful");
         navigate("/");
       } else {
-        throw new Error("Registration failed");
+        const err = await response.text();
+        console.log(err);
+        setErrorMsg(err);
       }
     } catch (error) {
-      console.error("Error occurred during registration:", error);
+      console.log("Error: ", error);
     }
   };
 
@@ -64,6 +68,7 @@ const SignUpComponent = () => {
         </div>
         <Border />
         <SignUpForm onSubmit={addUserToDb} />
+        {errorMsg && <span className="text-red-500 text-xs">{errorMsg}</span>}
         <div className="flex justify-center gap-1">
           Already have an account?
           <Link to="/login" className="text-[#565a5e] underline">
@@ -73,6 +78,10 @@ const SignUpComponent = () => {
       </InnerContainer>
     </Container>
   );
+};
+
+SignUpComponent.propTypes = {
+  message: PropTypes.string,
 };
 
 export default SignUpComponent;

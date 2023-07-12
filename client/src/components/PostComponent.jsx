@@ -7,17 +7,31 @@ import { FiEdit2 } from "react-icons/fi";
 import { CiMenuKebab } from "react-icons/ci";
 import { PostContext } from "../context/PostContext";
 import PropTypes from "prop-types";
-const PostComponent = ({ name, username, post, likes, postid }) => {
+const PostComponent = ({ name, username, post, likes, postid, postuserid }) => {
   const { setIsPosted } = useContext(PostContext);
   const dropDownRef = useRef();
+  const userid = localStorage.getItem("userid");
   const [dropdown, setDropdown] = useState(false);
   window.addEventListener("click", (e) => {
     if (e.target !== dropDownRef.current?.childNodes[0]) {
       setDropdown(false);
     }
   });
+
+  // const handledelete = async () => {
+  //   try {
+  //     const res = await fetch("http://localhost:5500/delete", {
+  //       method: "POST",
+  //       headers: { "Content-Type": "application/json" },
+  //       body: JSON.stringify({
+  //         postid,
+  //       }),
+  //     });
+  //   } catch (error) {
+  //     console.log("Error while deleting post: ", error);
+  //   }
+  // };
   const handleLike = async () => {
-    console.log(postid);
     try {
       const res = await fetch("http://localhost:5500/like", {
         method: "POST",
@@ -53,31 +67,36 @@ const PostComponent = ({ name, username, post, likes, postid }) => {
             <span className="font-semibold">{name}</span>
             <span className="text-[#565a5e]">@{username}</span>
           </div>
-          <div className="flex cursor-pointer relative items-center p-2">
-            <div
-              className="dropbtn"
-              onClick={() => {
-                setDropdown(!dropdown);
-              }}
-            >
-              <span ref={dropDownRef}>
-                <CiMenuKebab />
-              </span>
-            </div>
-            {dropdown && (
-              <div className="shadow-md shadow-slate-800 p-4 rounded-md flex flex-col gap-4 bg-[#16181c] absolute top-0 right-5">
-                <div className="flex items-center gap-2">
-                  <FiEdit2 className="w-[13px]" />
-                  <span className="font-semibold text-xs">Edit</span>
-                </div>
-                <div className="bg-[#565a5e] w-full h-[1px]"></div>
-                <div className="flex items-center gap-2">
-                  <AiOutlineDelete className="w-[13px]" />
-                  <span className="font-semibold text-xs">Delete</span>
-                </div>
+          {postuserid == userid && (
+            <div className="flex cursor-pointer relative items-center p-2">
+              <div
+                className="dropbtn"
+                onClick={() => {
+                  setDropdown(!dropdown);
+                }}
+              >
+                <span ref={dropDownRef}>
+                  <CiMenuKebab />
+                </span>
               </div>
-            )}
-          </div>
+              {dropdown && (
+                <div className="shadow-md shadow-slate-800 p-4 rounded-md flex flex-col gap-4 bg-[#16181c] absolute top-0 right-5">
+                  <div className="flex items-center gap-2">
+                    <FiEdit2 className="w-[13px]" />
+                    <span className="font-semibold text-xs">Edit</span>
+                  </div>
+                  <div className="bg-[#565a5e] w-full h-[1px]"></div>
+                  <div
+                    className="flex items-center gap-2"
+                    // onClick={handledelete}
+                  >
+                    <AiOutlineDelete className="w-[13px]" />
+                    <span className="font-semibold text-xs">Delete</span>
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
         </div>
         <div>{post}</div>
         <div className="flex gap-4 text-[#565a5e]">
@@ -112,6 +131,7 @@ PostComponent.propTypes = {
   post: PropTypes.string,
   likes: PropTypes.number,
   postid: PropTypes.number,
+  postuserid: PropTypes.number,
 };
 
 export default PostComponent;
