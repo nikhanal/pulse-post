@@ -5,11 +5,10 @@ import { PiShareFatLight } from "react-icons/pi";
 import { BiMessageRounded } from "react-icons/bi";
 import { FiEdit2 } from "react-icons/fi";
 import { CiMenuKebab } from "react-icons/ci";
-
-const PostComponent = () => {
+import PropTypes from "prop-types";
+const PostComponent = ({ name, username, post }) => {
   const dropDownRef = useRef();
   const [dropdown, setDropdown] = useState(false);
-
   window.addEventListener("click", (e) => {
     if (e.target !== dropDownRef.current?.childNodes[0]) {
       setDropdown(false);
@@ -25,11 +24,11 @@ const PostComponent = () => {
           alt="Profile"
         />
       </div>
-      <div className="flex flex-col gap-4">
+      <div className="flex flex-col gap-4 w-full">
         <div className="flex justify-between">
           <div className="flex gap-2">
-            <span className="font-semibold">Nishan Khanal</span>
-            <span className="text-[#565a5e]">@theKhanal</span>
+            <span className="font-semibold">{name}</span>
+            <span className="text-[#565a5e]">@{username}</span>
           </div>
           <div className="flex cursor-pointer relative items-center p-2">
             <div
@@ -43,7 +42,7 @@ const PostComponent = () => {
               </span>
             </div>
             {dropdown && (
-              <div className="shadow-md shadow-slate-800 p-4 rounded-md flex flex-col gap-4 bg-[#16181c] absolute top-0 right-4">
+              <div className="shadow-md shadow-slate-800 p-4 rounded-md flex flex-col gap-4 bg-[#16181c] absolute top-0 right-5">
                 <div className="flex items-center gap-2">
                   <FiEdit2 className="w-[13px]" />
                   <span className="font-semibold text-xs">Edit</span>
@@ -57,13 +56,9 @@ const PostComponent = () => {
             )}
           </div>
         </div>
-        <div>
-          How are Nepali doctors able to afford the entire cost of USMLE exams,
-          USCE and observerships? Not to sound offensive but is everyone rich in
-          Nepal? 😶
-        </div>
+        <div>{post}</div>
         <div className="flex gap-4 text-[#565a5e]">
-          <div className="flex items-center justify-center gap-2 ">
+          <div className="flex items-center justify-center gap-2">
             <BiMessageRounded />
             <span>10</span>
           </div>
@@ -83,6 +78,12 @@ const PostComponent = () => {
       </div>
     </div>
   );
+};
+
+PostComponent.propTypes = {
+  name: PropTypes.string,
+  username: PropTypes.string,
+  post: PropTypes.string,
 };
 
 export default PostComponent;

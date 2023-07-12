@@ -131,6 +131,20 @@ app.post("/signup", function (req, res) {
   );
 });
 
+app.get("/getposts", function (req, res) {
+  client.query(
+    "SELECT tbl_posts.post, tbl_user.username, tbl_user.name FROM tbl_posts INNER JOIN tbl_user ON tbl_posts.userid = tbl_user.userid ORDER BY tbl_posts.created_at DESC",
+    (err, result) => {
+      if (err) {
+        console.error("Error while fetching posts");
+        res.status(500).send("Error while fetching posts");
+      } else {
+        res.status(200).send(result.rows);
+      }
+    }
+  );
+});
+
 app.post("/post", function (req, res) {
   const { userid, post } = req.body;
   client.query(

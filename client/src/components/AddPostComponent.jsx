@@ -2,8 +2,11 @@ import userpic from "../assets/profile_pic.jpeg";
 import { MdPermMedia } from "react-icons/md";
 import { AiOutlineGif } from "react-icons/ai";
 import { useEffect, useRef, useState } from "react";
+import { PostContext } from "../context/PostContext";
+import { useContext } from "react";
 
 const AddPostComponent = () => {
+  const { setIsPosted } = useContext(PostContext);
   const [userId, setuserId] = useState();
   const postref = useRef();
   useEffect(() => {
@@ -29,6 +32,7 @@ const AddPostComponent = () => {
       if (res.ok) {
         console.log(await res.text());
         postref.current.value = "";
+        setIsPosted(1);
       } else {
         console.log(await res.text());
       }
