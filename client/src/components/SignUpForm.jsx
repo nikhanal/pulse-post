@@ -153,15 +153,6 @@ const SignUpForm = ({ onSubmit }) => {
         showError={errors.passwordConfirmationError}
         message="Please match the password."
       />
-      <div className="flex flex-col space-y-4">
-        <label
-          htmlFor="upload"
-          className="text-[#7d7f82] text-lg cursor-pointer"
-        >
-          Select your profile pic
-        </label>
-        <input type="file" id="upload" className="text-[#7d7f82]" required />
-      </div>
       <button
         type="submit"
         className="w-full
