@@ -180,7 +180,22 @@ app.post("/post", function (req, res) {
   );
 });
 
-app.post("/delete", function (req, res) {});
+app.post("/delete", function (req, res) {
+  const { postid } = req.body;
+  client.query(
+    "DELETE FROM tbl_posts WHERE postid = $1",
+    [postid],
+    function (err, result) {
+      if (err) {
+        console.error("Error occurred during deleting a post:", err);
+        res.status(500).send("Error occured during deleting a post");
+      } else {
+        console.log("Post deleted successfully");
+        res.status(200).send("Post was deleted successfully");
+      }
+    }
+  );
+});
 
 app.listen(port, () => {
   console.log(`Server started at port ${port}`);

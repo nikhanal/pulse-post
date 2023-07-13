@@ -18,19 +18,24 @@ const PostComponent = ({ name, username, post, likes, postid, postuserid }) => {
     }
   });
 
-  // const handledelete = async () => {
-  //   try {
-  //     const res = await fetch("http://localhost:5500/delete", {
-  //       method: "POST",
-  //       headers: { "Content-Type": "application/json" },
-  //       body: JSON.stringify({
-  //         postid,
-  //       }),
-  //     });
-  //   } catch (error) {
-  //     console.log("Error while deleting post: ", error);
-  //   }
-  // };
+  const handledelete = async () => {
+    try {
+      const res = await fetch("http://localhost:5500/delete", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          postid,
+        }),
+      });
+      if (res.ok) {
+        setIsPosted(1);
+      } else {
+        console.log(await res.text());
+      }
+    } catch (error) {
+      console.log("Error while deleting post: ", error);
+    }
+  };
   const handleLike = async () => {
     try {
       const res = await fetch("http://localhost:5500/like", {
@@ -88,7 +93,7 @@ const PostComponent = ({ name, username, post, likes, postid, postuserid }) => {
                   <div className="bg-[#565a5e] w-full h-[1px]"></div>
                   <div
                     className="flex items-center gap-2"
-                    // onClick={handledelete}
+                    onClick={handledelete}
                   >
                     <AiOutlineDelete className="w-[13px]" />
                     <span className="font-semibold text-xs">Delete</span>

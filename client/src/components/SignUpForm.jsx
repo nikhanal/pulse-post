@@ -92,7 +92,6 @@ const SignUpForm = ({ onSubmit }) => {
         showError={errors.nameError}
         message="Name can contain only letters and spaces characters."
       />
-
       <InputSec
         placeholder="Email"
         type="text"
@@ -109,7 +108,6 @@ const SignUpForm = ({ onSubmit }) => {
         showError={errors.emailError}
         message="Please enter a valid email."
       />
-
       <InputSec
         placeholder="Username"
         type="text"
@@ -126,7 +124,6 @@ const SignUpForm = ({ onSubmit }) => {
         showError={errors.usernameError}
         message="Username can contain only letters, numbers, and spaces characters."
       />
-
       <InputSec
         placeholder="Password"
         type="password"
@@ -143,7 +140,6 @@ const SignUpForm = ({ onSubmit }) => {
         showError={errors.passwordError}
         message="Please enter a password with one uppercase number and special character."
       />
-
       <InputSec
         placeholder="Confirm Password"
         type="password"
@@ -157,7 +153,15 @@ const SignUpForm = ({ onSubmit }) => {
         showError={errors.passwordConfirmationError}
         message="Please match the password."
       />
-
+      <div className="flex flex-col space-y-4">
+        <label
+          htmlFor="upload"
+          className="text-[#7d7f82] text-lg cursor-pointer"
+        >
+          Select your profile pic
+        </label>
+        <input type="file" id="upload" className="text-[#7d7f82]" required />
+      </div>
       <button
         type="submit"
         className="w-full
