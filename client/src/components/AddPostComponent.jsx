@@ -18,26 +18,28 @@ const AddPostComponent = () => {
 
   const handlePost = async () => {
     const postContent = await postref.current.value;
-    try {
-      const res = await fetch("http://localhost:5500/post", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          post: postContent,
-          userid: userId,
-        }),
-      });
-      if (res.ok) {
-        console.log(await res.text());
-        postref.current.value = "";
-        setIsPosted(1);
-      } else {
-        console.log(await res.text());
+    if (postContent.length > 0) {
+      try {
+        const res = await fetch("http://localhost:5500/post", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            post: postContent,
+            userid: userId,
+          }),
+        });
+        if (res.ok) {
+          console.log(await res.text());
+          postref.current.value = "";
+          setIsPosted(1);
+        } else {
+          console.log(await res.text());
+        }
+      } catch (error) {
+        console.log("Error while posting: ", error);
       }
-    } catch (error) {
-      console.log("Error while posting: ", error);
     }
   };
   return (
