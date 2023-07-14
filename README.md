@@ -1,2 +1,2 @@
 # pulse-post
-htttps://pulsepost.onrender.com
+https://pulsepost.onrender.com
