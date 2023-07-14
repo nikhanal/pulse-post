@@ -1,8 +1,8 @@
 const pg = require("pg");
 const express = require("express");
+const app = express();
 const cors = require("cors");
 const bcrypt = require("bcrypt");
-const app = express();
 const port = 5500;
 const jwt = require("jsonwebtoken");
 require("dotenv").config();
