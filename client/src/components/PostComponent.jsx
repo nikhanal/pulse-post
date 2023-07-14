@@ -1,5 +1,5 @@
-import { useState, useRef, useContext } from "react";
-import userpic from "../assets/profile_pic.jpeg";
+import { useState, useRef, useContext, useEffect } from "react";
+import userPhoto from "../assets/profile_pic.jpeg";
 import { AiOutlineLike, AiOutlineDelete } from "react-icons/ai";
 import { PiShareFatLight } from "react-icons/pi";
 import { BiMessageRounded } from "react-icons/bi";
@@ -12,15 +12,35 @@ const PostComponent = ({ name, username, post, likes, postid, postuserid }) => {
   const dropDownRef = useRef();
   const userid = localStorage.getItem("userid");
   const [dropdown, setDropdown] = useState(false);
+  const [userpic, setUserPic] = useState();
   window.addEventListener("click", (e) => {
     if (e.target !== dropDownRef.current?.childNodes[0]) {
       setDropdown(false);
     }
   });
+  if (!userpic) {
+    setUserPic(userPhoto);
+  }
+  useEffect(() => {
+    const getUserPic = async () => {
+      try {
+        const res = await fetch("https://randomuser.me/api/");
+        if (res.ok) {
+          const data = await res.json();
+          setUserPic(data.results[0].picture.large);
+        } else {
+          setUserPic(userPhoto);
+        }
+      } catch (error) {
+        console.log("Error while fetching user pic: ", error);
+      }
+    };
+    getUserPic();
+  }, []);
 
   const handledelete = async () => {
     try {
-      const res = await fetch("http://localhost:5500/delete", {
+      const res = await fetch("https://pulse-post.onrender.com/delete", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -36,9 +56,10 @@ const PostComponent = ({ name, username, post, likes, postid, postuserid }) => {
       console.log("Error while deleting post: ", error);
     }
   };
+
   const handleLike = async () => {
     try {
-      const res = await fetch("http://localhost:5500/like", {
+      const res = await fetch("https://pulse-post.onrender.com/like", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

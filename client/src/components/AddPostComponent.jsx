@@ -1,5 +1,5 @@
-import userpic from "../assets/profile_pic.jpeg";
 import { MdPermMedia } from "react-icons/md";
+import userPhoto from "../assets/profile_pic.jpeg";
 import { AiOutlineGif } from "react-icons/ai";
 import { useEffect, useRef, useState } from "react";
 import { PostContext } from "../context/PostContext";
@@ -9,6 +9,29 @@ const AddPostComponent = () => {
   const { setIsPosted } = useContext(PostContext);
   const [userId, setuserId] = useState();
   const postref = useRef();
+  const [userpic, setUserPic] = useState();
+
+  useEffect(() => {
+    const getUserPic = async () => {
+      try {
+        const res = await fetch("https://randomuser.me/api/");
+        if (res.ok) {
+          const data = await res.json();
+          setUserPic(data.results[0].picture.large);
+        } else {
+          setUserPic(userPhoto);
+        }
+      } catch (error) {
+        console.log("Error while fetching user pic: ", error);
+      }
+    };
+    getUserPic();
+  }, []);
+
+  if (!userpic) {
+    setUserPic(userPhoto);
+  }
+
   useEffect(() => {
     const isLoggedIn = !!localStorage.getItem("token");
     if (isLoggedIn) {
@@ -20,7 +43,7 @@ const AddPostComponent = () => {
     const postContent = await postref.current.value;
     if (postContent.length > 0) {
       try {
-        const res = await fetch("http://localhost:5500/post", {
+        const res = await fetch("https://pulse-post.onrender.com/post", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -45,13 +68,13 @@ const AddPostComponent = () => {
   return (
     <div className="text-white border-b-2  border-[#565a5e] flex p-4 gap-4">
       <div className="bg-red h-14 w-20">
-        <img src={userpic} className="rounder-[50%] object-cover"></img>
+        <img src={userpic} className="rounded-[50%] object-cover"></img>
       </div>
       <div className="w-full">
         <form>
           <input
             placeholder="What is in your mind?"
-            className="bg-inherit py-10 w-full outline-0 text-lg"
+            className="bg-inherit py-8 w-full outline-0 text-lg"
             ref={postref}
           />
         </form>
