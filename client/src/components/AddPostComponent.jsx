@@ -46,7 +46,7 @@ const AddPostComponent = () => {
     formData.append("media", media);
     console.log(formData);
     try {
-      const res = await fetch("http://localhost:5500/post", {
+      const res = await fetch("https://pulse-post.onrender.com/post", {
         method: "POST",
         body: formData,
       });

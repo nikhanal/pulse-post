@@ -29,11 +29,9 @@ const PostComponent = ({
       setDropdown(false);
     }
   });
-
   if (!userpic) {
     setUserPic(userPhoto);
   }
-
   useEffect(() => {
     const getUserPic = async () => {
       try {
@@ -55,7 +53,9 @@ const PostComponent = ({
     const fetchPostImage = async () => {
       try {
         if (mediaPath) {
-          const res = await fetch(`http://localhost:5500/uploads/${mediaPath}`);
+          const res = await fetch(
+            `https://pulse-post.onrender.com/uploads/${mediaPath}`
+          );
           if (res.ok) {
             setPostImage(URL.createObjectURL(await res.blob()));
           }
@@ -70,7 +70,7 @@ const PostComponent = ({
 
   const handledelete = async () => {
     try {
-      const res = await fetch("http://localhost:5500/delete", {
+      const res = await fetch("https://pulse-post.onrender.com/delete", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -89,7 +89,7 @@ const PostComponent = ({
 
   const handleLike = async () => {
     try {
-      const res = await fetch("http://localhost:5500/like", {
+      const res = await fetch("https://pulse-post.onrender.com/like", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
