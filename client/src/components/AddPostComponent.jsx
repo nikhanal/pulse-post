@@ -5,12 +5,13 @@ import { MdPermMedia } from "react-icons/md";
 import { AiOutlineGif } from "react-icons/ai";
 
 const AddPostComponent = () => {
-  const { setIsPosted } = useContext(PostContext);
+  const { setIsPosted, isPosted } = useContext(PostContext);
   const [userId, setUserId] = useState("");
   const postRef = useRef();
   const mediaRef = useRef();
   const [userPic, setUserPic] = useState(userPhoto);
   const [uploadedMedia, setUploadedMedia] = useState("");
+  const [postEmpty, setPostEmpty] = useState(false);
 
   useEffect(() => {
     const getUserPic = async () => {
@@ -30,11 +31,12 @@ const AddPostComponent = () => {
   }, []);
 
   useEffect(() => {
+    setPostEmpty(false);
     const isLoggedIn = !!localStorage.getItem("token");
     if (isLoggedIn) {
       setUserId(localStorage.getItem("userid"));
     }
-  }, []);
+  }, [isPosted]);
 
   const handlePost = async (e) => {
     e.preventDefault();
@@ -45,22 +47,26 @@ const AddPostComponent = () => {
     formData.append("userid", userId);
     formData.append("media", media);
     console.log(formData);
-    try {
-      const res = await fetch("https://pulse-post.onrender.com/post", {
-        method: "POST",
-        body: formData,
-      });
-      if (res.ok) {
-        console.log(await res.text());
-        postRef.current.value = "";
-        mediaRef.current.value = null;
-        setUploadedMedia("");
-        setIsPosted(1);
-      } else {
-        console.log(await res.text());
+    if (postContent.length > 0 || media) {
+      try {
+        const res = await fetch("https://pulse-post.onrender.com/post", {
+          method: "POST",
+          body: formData,
+        });
+        if (res.ok) {
+          console.log(await res.text());
+          postRef.current.value = "";
+          mediaRef.current.value = null;
+          setUploadedMedia("");
+          setIsPosted(1);
+        } else {
+          console.log(await res.text());
+        }
+      } catch (error) {
+        console.log("Error while posting: ", error);
       }
-    } catch (error) {
-      console.log("Error while posting: ", error);
+    } else {
+      setPostEmpty(true);
     }
   };
 
@@ -74,45 +80,56 @@ const AddPostComponent = () => {
   };
 
   return (
-    <div className="text-white border-b-2  border-[#565a5e] flex p-4 gap-4">
-      <div className="bg-red h-14 w-20">
-        <img src={userPic} alt="User" className="rounded-[50%] object-cover" />
-      </div>
-      <div className="w-full">
-        <form>
-          <input
-            placeholder="What is in your mind?"
-            className="bg-inherit py-8 w-full outline-0 text-lg"
-            ref={postRef}
+    <>
+      <div className="text-white border-b-2  border-[#565a5e] flex p-4 gap-4">
+        <div className="bg-red h-14 w-20">
+          <img
+            src={userPic}
+            alt="User"
+            className="rounded-[50%] object-cover"
           />
-          <input
-            id="fileInput"
-            type="file"
-            accept="image/*"
-            ref={mediaRef}
-            style={{ display: "none" }}
-            onChange={handleMediaInputChange}
-          />
-        </form>
-        <div className="flex justify-between items-center">
-          <div className="flex gap-4 text-[#565a5e]">
-            <label htmlFor="fileInput">
-              <MdPermMedia className="cursor-pointer" />
-            </label>
-            <AiOutlineGif />
-          </div>
-          <button
-            className="bg-[#565a5e] px-6 py-2 rounded-xl hover:bg-black border border-[#565a5e]"
-            onClick={handlePost}
-          >
-            Post
-          </button>
         </div>
-        {uploadedMedia && (
-          <p className="text-[#565a5e] mt-2">Uploaded Media: {uploadedMedia}</p>
-        )}
+        <div className="w-full">
+          <form>
+            <input
+              placeholder="What is in your mind?"
+              className="bg-inherit py-8 w-full outline-0 text-lg"
+              ref={postRef}
+            />
+            <input
+              id="fileInput"
+              type="file"
+              accept="image/*"
+              ref={mediaRef}
+              style={{ display: "none" }}
+              onChange={handleMediaInputChange}
+            />
+          </form>
+          <div className="flex justify-between items-center">
+            <div className="flex gap-4 text-[#565a5e]">
+              <label htmlFor="fileInput">
+                <MdPermMedia className="cursor-pointer" />
+              </label>
+              <AiOutlineGif />
+            </div>
+            <button
+              className="bg-[#565a5e] px-6 py-2 rounded-xl hover:bg-black border border-[#565a5e]"
+              onClick={handlePost}
+            >
+              Post
+            </button>
+          </div>
+          {uploadedMedia && (
+            <p className="text-[#565a5e] mt-2">
+              Uploaded Media: {uploadedMedia}
+            </p>
+          )}
+          {postEmpty && (
+            <div className="text-[#565a5e]">Please Enter Something to post</div>
+          )}
+        </div>
       </div>
-    </div>
+    </>
   );
 };
 
