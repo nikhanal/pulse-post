@@ -7,20 +7,33 @@ import { FiEdit2 } from "react-icons/fi";
 import { CiMenuKebab } from "react-icons/ci";
 import { PostContext } from "../context/PostContext";
 import PropTypes from "prop-types";
-const PostComponent = ({ name, username, post, likes, postid, postuserid }) => {
+
+const PostComponent = ({
+  name,
+  username,
+  post,
+  likes,
+  postid,
+  postuserid,
+  mediaPath,
+}) => {
   const { setIsPosted } = useContext(PostContext);
   const dropDownRef = useRef();
   const userid = localStorage.getItem("userid");
   const [dropdown, setDropdown] = useState(false);
   const [userpic, setUserPic] = useState();
+  const [postImage, setPostImage] = useState(null);
+
   window.addEventListener("click", (e) => {
     if (e.target !== dropDownRef.current?.childNodes[0]) {
       setDropdown(false);
     }
   });
+
   if (!userpic) {
     setUserPic(userPhoto);
   }
+
   useEffect(() => {
     const getUserPic = async () => {
       try {
@@ -38,9 +51,26 @@ const PostComponent = ({ name, username, post, likes, postid, postuserid }) => {
     getUserPic();
   }, []);
 
+  useEffect(() => {
+    const fetchPostImage = async () => {
+      try {
+        if (mediaPath) {
+          const res = await fetch(`http://localhost:5500/uploads/${mediaPath}`);
+          if (res.ok) {
+            setPostImage(URL.createObjectURL(await res.blob()));
+          }
+        }
+      } catch (error) {
+        console.log("Error while fetching post image: ", error);
+      }
+    };
+
+    fetchPostImage();
+  }, [mediaPath]);
+
   const handledelete = async () => {
     try {
-      const res = await fetch("https://pulse-post.onrender.com/delete", {
+      const res = await fetch("http://localhost:5500/delete", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -59,7 +89,7 @@ const PostComponent = ({ name, username, post, likes, postid, postuserid }) => {
 
   const handleLike = async () => {
     try {
-      const res = await fetch("https://pulse-post.onrender.com/like", {
+      const res = await fetch("http://localhost:5500/like", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -78,12 +108,13 @@ const PostComponent = ({ name, username, post, likes, postid, postuserid }) => {
       console.log("Error while liking post: ", error);
     }
   };
+
   return (
     <div className="w-full bg-[#16181c] text-white rounded-md flex p-4 gap-4 min-h-[150px]">
       <div className="h-16 w-24">
         <img
           src={userpic}
-          className=" rounded-[50%] object-cover"
+          className="rounded-[50%] object-cover"
           alt="Profile"
         />
       </div>
@@ -125,6 +156,15 @@ const PostComponent = ({ name, username, post, likes, postid, postuserid }) => {
           )}
         </div>
         <div>{post}</div>
+        {postImage && (
+          <div className="h-[150px] w-full">
+            <img
+              src={postImage}
+              alt="Post"
+              className="w-full h-full object-cover rounded-md"
+            />
+          </div>
+        )}
         <div className="flex gap-4 text-[#565a5e]">
           <div className="flex items-center justify-center gap-2">
             <BiMessageRounded />
@@ -158,6 +198,7 @@ PostComponent.propTypes = {
   likes: PropTypes.number,
   postid: PropTypes.number,
   postuserid: PropTypes.number,
+  mediaPath: PropTypes.string,
 };
 
 export default PostComponent;

@@ -1,11 +1,15 @@
-const pg = require("pg");
 const express = require("express");
 const app = express();
+const pg = require("pg");
 const cors = require("cors");
 const bcrypt = require("bcrypt");
 const port = 5500;
 const jwt = require("jsonwebtoken");
+const multer = require("multer");
+const path = require("path");
 require("dotenv").config();
+app.use(cors());
+app.use(express.json());
 
 const jwtSecret = process.env.JWT_SECRET;
 const conString = process.env.DB_KEY;
@@ -18,9 +22,17 @@ client.connect(function (err) {
     console.log("Connected to PostgreSQL");
   }
 });
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, "uploads/");
+  },
+  filename: function (req, file, cb) {
+    cb(null, file.originalname);
+  },
+});
 
-app.use(cors());
-app.use(express.json());
+const upload = multer({ storage });
 
 app.post("/login", function (req, res) {
   const { email, password } = req.body;
@@ -132,7 +144,7 @@ app.post("/signup", function (req, res) {
 
 app.get("/getposts", function (req, res) {
   client.query(
-    "SELECT tbl_posts.post, tbl_user.username, tbl_user.name, tbl_posts.likes, tbl_posts.postid,tbl_posts.userid as postuserid FROM tbl_posts INNER JOIN tbl_user ON tbl_posts.userid = tbl_user.userid ORDER BY tbl_posts.created_at DESC",
+    "SELECT tbl_posts.post, tbl_user.username, tbl_user.name, tbl_posts.likes, tbl_posts.postid, tbl_posts.userid as postuserid, tbl_posts.media_path FROM tbl_posts INNER JOIN tbl_user ON tbl_posts.userid = tbl_user.userid ORDER BY tbl_posts.created_at DESC",
     (err, result) => {
       if (err) {
         console.error("Error while fetching posts");
@@ -164,11 +176,14 @@ app.post("/like", function (req, res) {
   );
 });
 
-app.post("/post", function (req, res) {
+app.post("/post", upload.single("media"), function (req, res) {
+  console.log(req);
   const { userid, post } = req.body;
+  const media = req.file;
+  const mediaPath = media ? media.filename : null;
   client.query(
-    "INSERT INTO tbl_posts (userid,post) VALUES ($1,$2)",
-    [userid, post],
+    "INSERT INTO tbl_posts (userid,post,media_path) VALUES ($1,$2,$3)",
+    [userid, post, mediaPath],
     function (err, result) {
       if (err) {
         console.error("Error occurred during adding a post:", err);

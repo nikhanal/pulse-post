@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import PostComponent from "./PostComponent";
 import { PostContext } from "../context/PostContext";
 import { useContext } from "react";
+
 const RenderPostsComponent = () => {
   const [postData, setPostData] = useState([]);
   const { isPosted, setIsPosted } = useContext(PostContext);
@@ -9,7 +10,7 @@ const RenderPostsComponent = () => {
   useEffect(() => {
     const fetchPosts = async () => {
       try {
-        const res = await fetch("https://pulse-post.onrender.com/getposts");
+        const res = await fetch("http://localhost:5500/getposts");
         const data = await res.json();
         setPostData(data);
         setIsPosted(0);
@@ -33,6 +34,7 @@ const RenderPostsComponent = () => {
             key={post.postid}
             postid={post.postid}
             postuserid={post.postuserid}
+            mediaPath={post.media_path}
           />
         ))
       ) : (
