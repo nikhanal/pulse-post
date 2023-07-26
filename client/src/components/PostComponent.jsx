@@ -157,7 +157,7 @@ const PostComponent = ({
         </div>
         <div>{post}</div>
         {postImage && (
-          <div className="h-[150px] w-full">
+          <div className="h-[350px] w-full">
             <img
               src={postImage}
               alt="Post"
