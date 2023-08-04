@@ -1,25 +1,21 @@
-import { useEffect, useState, useContext } from "react";
-import { ClipLoader } from "react-spinners";
+import { useEffect, useState } from "react";
 import PostComponent from "./PostComponent";
 import { PostContext } from "../context/PostContext";
+import { useContext } from "react";
 
 const RenderPostsComponent = () => {
   const [postData, setPostData] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
   const { isPosted, setIsPosted } = useContext(PostContext);
 
   useEffect(() => {
     const fetchPosts = async () => {
       try {
-        setIsLoading(true);
         const res = await fetch("https://pulse-post.onrender.com/getposts");
         const data = await res.json();
         setPostData(data);
         setIsPosted(0);
-        setIsLoading(false);
       } catch (error) {
         console.log(error);
-        setIsLoading(false);
       }
     };
 
@@ -28,9 +24,7 @@ const RenderPostsComponent = () => {
 
   return (
     <>
-      {isLoading ? (
-        <ClipLoader color="#ffffff" loading={isLoading} size={50} />
-      ) : postData.length > 0 ? (
+      {postData.length > 0 ? (
         postData.map((post) => (
           <PostComponent
             username={post.username}

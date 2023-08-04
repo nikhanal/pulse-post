@@ -4,6 +4,7 @@ import Logo from "../assets/logos/PulsePost-logos_white.png";
 import SignUpForm from "./SignUpForm";
 import { useState } from "react";
 import { PropTypes } from "prop-types";
+import { ClipLoader } from "react-spinners";
 
 const Container = tw.div`
   w-[50%]
@@ -27,10 +28,13 @@ const Border = tw.div`
 `;
 
 const SignUpComponent = () => {
+  const [isLoading, setIsLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState(null);
   const navigate = useNavigate();
+
   const addUserToDb = async (formData) => {
     try {
+      setIsLoading(true);
       const response = await fetch("https://pulse-post.onrender.com/signup", {
         method: "POST",
         headers: {
@@ -38,6 +42,9 @@ const SignUpComponent = () => {
         },
         body: JSON.stringify(formData),
       });
+
+      setIsLoading(false);
+
       if (response.ok) {
         const data = await response.json();
         const { token, username, name, userid } = data;
@@ -54,6 +61,7 @@ const SignUpComponent = () => {
       }
     } catch (error) {
       console.log("Error: ", error);
+      setIsLoading(false);
     }
   };
 
@@ -67,14 +75,22 @@ const SignUpComponent = () => {
           </h1>
         </div>
         <Border />
-        <SignUpForm onSubmit={addUserToDb} />
-        {errorMsg && <span className="text-red-500 text-xs">{errorMsg}</span>}
-        <div className="flex justify-center gap-1">
-          Already have an account?
-          <Link to="/login" className="text-[#565a5e] underline">
-            Log In
-          </Link>
-        </div>
+        {isLoading ? (
+          <ClipLoader color="#ffffff" loading={isLoading} size={50} />
+        ) : (
+          <>
+            <SignUpForm onSubmit={addUserToDb} />
+            {errorMsg && (
+              <span className="text-red-500 text-xs">{errorMsg}</span>
+            )}
+            <div className="flex justify-center gap-1">
+              Already have an account?
+              <Link to="/login" className="text-[#565a5e] underline">
+                Log In
+              </Link>
+            </div>
+          </>
+        )}
       </InnerContainer>
     </Container>
   );

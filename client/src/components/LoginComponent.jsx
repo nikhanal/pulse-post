@@ -2,6 +2,7 @@ import tw from "tailwind-styled-components";
 import Logo from "../assets/logos/PulsePost-logos_white.png";
 import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
+import { ClipLoader } from "react-spinners";
 
 const InputSec = tw.input`
   w-full
@@ -17,6 +18,7 @@ const InputSec = tw.input`
 const LoginComponent = () => {
   const navigate = useNavigate();
 
+  const [isLoading, setIsLoading] = useState(false);
   const [loginFormData, setLoginFormData] = useState({
     email: "",
     password: "",
@@ -26,6 +28,7 @@ const LoginComponent = () => {
 
   const handleLogin = async (e) => {
     e.preventDefault();
+    setIsLoading(true);
     try {
       const response = await fetch("https://pulse-post.onrender.com/login", {
         method: "POST",
@@ -37,6 +40,8 @@ const LoginComponent = () => {
           password: loginFormData.password,
         }),
       });
+
+      setIsLoading(false);
 
       if (response.ok) {
         const data = await response.json();
@@ -61,6 +66,7 @@ const LoginComponent = () => {
     } catch (error) {
       console.error("Error occurred during login:", error);
       setErrorMessage("Error occurred during login");
+      setIsLoading(false);
     }
   };
 
@@ -74,46 +80,55 @@ const LoginComponent = () => {
           </h1>
         </div>
         <div className="bg-[#565a5e] w-full h-[1px]"></div>
-        <form className="flex flex-col gap-4">
-          <InputSec
-            placeholder="Email"
-            type="email"
-            onChange={(e) =>
-              setLoginFormData({ ...loginFormData, email: e.target.value })
-            }
-          />
-          <InputSec
-            placeholder="Password"
-            type="password"
-            onChange={(e) =>
-              setLoginFormData({ ...loginFormData, password: e.target.value })
-            }
-          />
-          <button
-            onClick={handleLogin}
-            className="w-full
-            outline-none
-            bg-white
-            text-[#565a5e]
-            border-0
-            rounded-[10px]
-            px-4
-            py-2
-            text-lg 
-            hover:bg-[#16181c] hover:border hover:border-[#565a5e]"
-          >
-            Log In
-          </button>
-          {errorMessage && (
-            <span className="text-red-500 text-xs">{errorMessage}</span>
-          )}
-        </form>
-        <div className="flex justify-center gap-1">
-          Don&apos;t have an account?
-          <Link to="/signup" className="text-[#565a5e] underline">
-            Sign Up
-          </Link>
-        </div>
+        {isLoading ? (
+          <ClipLoader color="#ffffff" loading={isLoading} size={50} />
+        ) : (
+          <>
+            <form className="flex flex-col gap-4">
+              <InputSec
+                placeholder="Email"
+                type="email"
+                onChange={(e) =>
+                  setLoginFormData({ ...loginFormData, email: e.target.value })
+                }
+              />
+              <InputSec
+                placeholder="Password"
+                type="password"
+                onChange={(e) =>
+                  setLoginFormData({
+                    ...loginFormData,
+                    password: e.target.value,
+                  })
+                }
+              />
+              <button
+                onClick={handleLogin}
+                className="w-full
+                outline-none
+                bg-white
+                text-[#565a5e]
+                border-0
+                rounded-[10px]
+                px-4
+                py-2
+                text-lg 
+                hover:bg-[#16181c] hover:border hover:border-[#565a5e]"
+              >
+                Log In
+              </button>
+              {errorMessage && (
+                <span className="text-red-500 text-xs">{errorMessage}</span>
+              )}
+            </form>
+            <div className="flex justify-center gap-1">
+              Don&apos;t have an account?
+              <Link to="/signup" className="text-[#565a5e] underline">
+                Sign Up
+              </Link>
+            </div>
+          </>
+        )}
       </div>
     </div>
   );
