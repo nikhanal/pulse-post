@@ -43,27 +43,25 @@ const AddPostComponent = () => {
     const postContent = postRef.current.value;
     const media = mediaRef.current.files[0];
     const formData = new FormData();
+    formData.append("userid", localStorage.getItem("userid"));
     formData.append("post", postContent);
-    formData.append("userid", userId);
-    formData.append("media", media);
-    console.log(formData);
+    if (media) {
+      formData.append("media", media);
+    }
     if (postContent.length > 0 || media) {
       try {
-        const res = await fetch("https://pulse-post.onrender.com/post", {
+        const res = await fetch("http://localhost:5500/post", {
           method: "POST",
           body: formData,
         });
         if (res.ok) {
-          console.log(await res.text());
           postRef.current.value = "";
           mediaRef.current.value = null;
           setUploadedMedia("");
           setIsPosted(1);
-        } else {
-          console.log(await res.text());
         }
       } catch (error) {
-        console.log("Error while posting: ", error);
+        console.log("Error while adding post: ", error);
       }
     } else {
       setPostEmpty(true);
@@ -113,7 +111,7 @@ const AddPostComponent = () => {
               <AiOutlineGif />
             </div>
             <button
-              className="bg-[#565a5e] px-6 py-2 rounded-xl hover:bg-black border border-[#565a5e]"
+              className="bg-[#1d9bf0] px-3 sm:px-6 py-1 sm:py-2 text-sm sm:text-base rounded-full hover:bg-[#1a8cd8] transition-colors font-semibold"
               onClick={handlePost}
             >
               Post
