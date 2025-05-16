@@ -119,7 +119,7 @@ const MessageChat = ({ currentUserId, otherUser, onMessageSent }) => {
   
   const fetchMessages = async () => {
     try {
-      const res = await fetch(`http://pulse-post.onrender.com/messages/${currentUserId}/${otherUser.userId}`);
+      const res = await fetch(`https://pulse-post.onrender.com/messages/${currentUserId}/${otherUser.userId}`);
       if (res.ok) {
         const data = await res.json();
         setMessages(data);
@@ -139,7 +139,7 @@ const MessageChat = ({ currentUserId, otherUser, onMessageSent }) => {
     
     setLoading(true);
     try {
-      const res = await fetch('http://pulse-post.onrender.com/message', {
+      const res = await fetch('https://pulse-post.onrender.com/message', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
