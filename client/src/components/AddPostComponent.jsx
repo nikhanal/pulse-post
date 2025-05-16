@@ -50,7 +50,7 @@ const AddPostComponent = () => {
     }
     if (postContent.length > 0 || media) {
       try {
-        const res = await fetch("http://pulse-post.onrender.com/post", {
+        const res = await fetch("https://pulse-post.onrender.com/post", {
           method: "POST",
           body: formData,
         });

@@ -10,7 +10,7 @@ const RenderPostsComponent = () => {
   useEffect(() => {
     const fetchPosts = async () => {
       try {
-        const res = await fetch("http://pulse-post.onrender.com/getposts");
+        const res = await fetch("https://pulse-post.onrender.com/getposts");
         const data = await res.json();
         setPostData(data);
         setIsPosted(0);
