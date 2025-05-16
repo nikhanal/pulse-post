@@ -35,7 +35,7 @@ const SignUpComponent = () => {
   const addUserToDb = async (formData) => {
     try {
       setIsLoading(true);
-      const response = await fetch("http://localhost:5500/signup", {
+      const response = await fetch("http://pulse-post.onrender.com/signup", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

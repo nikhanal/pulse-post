@@ -38,7 +38,7 @@ export const SideBarComponent = ({ image }) => {
   
   const fetchUnreadMessages = async () => {
     try {
-      const res = await fetch(`http://localhost:5500/messages/unread/${userId}`);
+      const res = await fetch(`http://pulse-post.onrender.com/messages/unread/${userId}`);
       if (res.ok) {
         const data = await res.json();
         setUnreadCount(data.count);

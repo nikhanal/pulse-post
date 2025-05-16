@@ -109,7 +109,7 @@ const ConversationList = ({ conversations, onSelectUser, selectedUserId }) => {
   // Fetch all users for new chat
   const fetchUsers = async () => {
     try {
-      const res = await fetch('http://localhost:5500/users');
+      const res = await fetch('http://pulse-post.onrender.com/users');
       if (res.ok) {
         const data = await res.json();
         // Store all users, we'll filter them when displaying

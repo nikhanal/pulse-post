@@ -51,7 +51,7 @@ const CommentSectionComponent = ({ postid, userid, onCommentUpdate }) => {
 
   const fetchComments = async () => {
     try {
-      const res = await fetch(`http://localhost:5500/comments/${postid}`);
+      const res = await fetch(`http://pulse-post.onrender.com/comments/${postid}`);
       if (res.ok) {
         const data = await res.json();
         setComments(data);
@@ -75,7 +75,7 @@ const CommentSectionComponent = ({ postid, userid, onCommentUpdate }) => {
 
     setLoading(true);
     try {
-      const res = await fetch('http://localhost:5500/comment', {
+      const res = await fetch('http://pulse-post.onrender.com/comment', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -100,7 +100,7 @@ const CommentSectionComponent = ({ postid, userid, onCommentUpdate }) => {
 
   const handleDeleteComment = async (commentid) => {
     try {
-      const res = await fetch('http://localhost:5500/deletecomment', {
+      const res = await fetch('http://pulse-post.onrender.com/deletecomment', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
