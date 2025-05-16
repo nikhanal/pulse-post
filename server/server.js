@@ -15,7 +15,13 @@ const Post = require('./models/Post');
 const Comment = require('./models/Comment');
 const Message = require('./models/Message');
 
-app.use(cors());
+// Configure CORS to allow requests from any origin
+app.use(cors({
+  origin: '*',
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+}));
+
 app.use(express.json());
 
 const jwtSecret = process.env.JWT_SECRET;
