@@ -171,7 +171,7 @@ const MessageChat = ({ currentUserId, otherUser, onMessageSent }) => {
   };
   
   return (
-    <Container>
+    <ChatContainer>
       <Header>
         <UserName>
           {otherUser.name}
@@ -216,7 +216,7 @@ const MessageChat = ({ currentUserId, otherUser, onMessageSent }) => {
           </SendButton>
         </form>
       </InputContainer>
-    </Container>
+    </ChatContainer>
   );
 };
 
