@@ -40,7 +40,7 @@ const MessagesPage = () => {
 
   const fetchConversations = async () => {
     try {
-      const res = await fetch(`http://pulse-post.onrender.com/conversations/${userId}`);
+      const res = await fetch(`https://pulse-post.onrender.com/conversations/${userId}`);
       if (res.ok) {
         const data = await res.json();
         setConversations(data);
